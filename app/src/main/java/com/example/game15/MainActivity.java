@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -24,7 +25,7 @@ import static java.util.Locale.ENGLISH;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private final int BLOCKS_SIDE_COUNT = 4;
-    private Game15 game;
+    private Game15 game = Game15.getCurrentGame();
 
     private TableLayout fieldLayout;
     private RelativeLayout[][] fieldBlocks;
@@ -35,6 +36,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("A", "onCreate: ");
         setContentView(R.layout.activity_main);
 
         fieldLayout = findViewById(R.id.game_layout);
@@ -42,15 +44,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         fieldBlocks = new RelativeLayout[BLOCKS_SIDE_COUNT][BLOCKS_SIDE_COUNT];
 
         findViewById(R.id.btn_newgame).setOnClickListener((v) -> {
-            game = new Game15(BLOCKS_SIDE_COUNT);
+            game.restart();
             update();
             freeze = false;
         });
 
         final int display_width = getResources().getDisplayMetrics().widthPixels;
-        final int block_dim = display_width / BLOCKS_SIDE_COUNT;
-
-        game = new Game15(BLOCKS_SIDE_COUNT);
+        final int display_height = getResources().getDisplayMetrics().heightPixels;
+        final int block_dim = Math.min(display_height, display_width) / BLOCKS_SIDE_COUNT;
 
         for (int i = 0; i < BLOCKS_SIDE_COUNT; i++) {
             TableRow row = new TableRow(this);
@@ -78,7 +79,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         update();
     }
-
 
     private void update() {
         int[][] field = game.getField();

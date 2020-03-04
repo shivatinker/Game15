@@ -9,15 +9,27 @@ import java.util.Random;
 
 public class Game15 {
     public static final int FREE_BLOCK = 0;
+    public static final int SIZE = 4;
     private final int size;
     private final int total;
     private int[][] field;
     private int moves = 0;
 
-    public Game15(int size) {
+    public static int curID = 0;
+    public final int ID;
+
+    private static Game15 currentGame;
+
+    private Game15(int size) {
+        ID = ++curID;
         this.size = size;
-        this.field = new int[size][size];
         total = size * size;
+        this.field = new int[size][size];
+        restart();
+    }
+
+    public void restart() {
+        moves = 0;
         Random r = new Random();
         ArrayList<Integer> values = new ArrayList<>();
         values.add(FREE_BLOCK);
@@ -38,6 +50,12 @@ public class Game15 {
         }
         if (!canSolve())
             System.err.println("Oops.");
+    }
+
+    public static Game15 getCurrentGame() {
+        if (currentGame == null)
+            currentGame = new Game15(SIZE);
+        return currentGame;
     }
 
     private boolean canSolve() {
